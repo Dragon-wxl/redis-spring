@@ -1,12 +1,19 @@
 package com.csuft.wxl.pojo;
 
-public class Produc {
-	int id;
-	String name;
-	String category;
-	float price;
-	String place;
+import org.apache.solr.client.solrj.beans.Field;
 
+public class Produc {
+	@Field
+	int id;
+	@Field
+	String name;
+	@Field
+	String category;
+	@Field
+	float price;
+	@Field
+	String place;
+	@Field
 	String code;
 
 	public int getId() {

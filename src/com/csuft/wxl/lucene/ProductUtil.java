@@ -17,6 +17,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -38,7 +39,6 @@ public class ProductUtil {
 	public static void main(String[] args) throws IOException, ParseException, InvalidTokenOffsetsException {
 		ProductUtil productUtil = new ProductUtil();
 		StringBuffer str = productUtil.search();
-		System.out.println(str);
 	}
 
 	public static Directory getIndex() throws IOException {
@@ -98,6 +98,26 @@ public class ProductUtil {
 		IKAnalyzer analyzer = new IKAnalyzer();
 
 		Directory index = getIndex();
+		
+		////删除id=51173的数据
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        IndexWriter indexWriter = new IndexWriter(index, config);
+        indexWriter.deleteDocuments(new Term("id", "51173"));
+        indexWriter.commit();
+//        indexWriter.close();
+     // 更新索引
+//        IndexWriterConfig config = new IndexWriterConfig(analyzer);
+//        IndexWriter indexWriter = new IndexWriter(index, config);
+        Document doc = new Document();
+        doc.add(new TextField("id", "51173", Field.Store.YES));
+        doc.add(new TextField("name", "神鞭，鞭没了，神还在", Field.Store.YES));
+        doc.add(new TextField("category", "道具", Field.Store.YES));
+        doc.add(new TextField("price", "998", Field.Store.YES));
+        doc.add(new TextField("place", "南海群岛", Field.Store.YES));
+        doc.add(new TextField("code", "888888", Field.Store.YES));
+        indexWriter.updateDocument(new Term("id", "51173"), doc );
+        indexWriter.commit();
+        indexWriter.close();
 
 		int times = 0;
 
@@ -106,7 +126,7 @@ public class ProductUtil {
 //		while (true) {
 		System.out.print("请输入查询关键字：");
 //				String keyword = s.nextLine();
-		String keyword = "手机";
+		String keyword = "鞭";
 		System.out.println("当前关键字是：" + keyword);
 		Query query = new QueryParser("name", analyzer).parse(keyword);
 
@@ -114,11 +134,11 @@ public class ProductUtil {
 		IndexReader reader = DirectoryReader.open(index);
 		IndexSearcher searcher = new IndexSearcher(reader);
 //		int numberPerPage = 20;
-		int pageNow = 854;
+		int pageNow = 1;
 		int pageSize = 10;
 
 		ScoreDoc[] hits = pageSearch1(query, searcher, pageNow, pageSize);
-		;
+		
 //		ScoreDoc[] hits = searcher.search(query, numberPerPage).scoreDocs;
 
 		// 5. 显示查询结果
@@ -169,8 +189,6 @@ public class ProductUtil {
 	private static ScoreDoc[] pageSearch1(Query query, IndexSearcher searcher, int pageNow, int pageSize)
 			throws IOException {
 		TopDocs topDocs = searcher.search(query, pageNow * pageSize);
-		TopDocs topDocs1 = searcher.search(query, 10);
-		System.out.println(topDocs1.totalHits);
 		System.out.println("查询到的总条数\t" + topDocs.totalHits);
 		ScoreDoc[] alllScores = topDocs.scoreDocs;
 
@@ -178,6 +196,9 @@ public class ProductUtil {
 
 		int start = (pageNow - 1) * pageSize;
 		int end = pageSize * pageNow;
+		if (end>=topDocs.totalHits) {
+			end=(int)topDocs.totalHits;
+		}
 		for (int i = start; i < end; i++)
 			hitScores.add(alllScores[i]);
 

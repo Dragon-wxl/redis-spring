@@ -82,6 +82,18 @@
     <artifactId>IKAnalyzer-lucene</artifactId>
     <version>4.1.0</version>
 </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.solr/solr-solrj -->
+<dependency>
+    <groupId>org.apache.solr</groupId>
+    <artifactId>solr-solrj</artifactId>
+    <version>7.2.1</version>
+</dependency>
+		<!-- https://mvnrepository.com/artifact/org.noggit/noggit -->
+<dependency>
+    <groupId>org.noggit</groupId>
+    <artifactId>noggit</artifactId>
+    <version>0.8</version>
+</dependency>
 		
 	</dependencies>
 
