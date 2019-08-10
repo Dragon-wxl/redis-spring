@@ -12,11 +12,12 @@ public class HelloWorld extends HttpServlet {
 		String userName = (String) request.getSession().getAttribute("account");
 		response.setContentType("text/html;charset=UTF-8");
 		TestLucene testLucene = new TestLucene();
+		ProductUtil productUtil=new ProductUtil();
 		try {
 
 			StringBuffer str = new StringBuffer();
 			str.append("<pre>");
-			str.append(testLucene.getSearch());
+			str.append(productUtil.search());
 			str.append("</pre>");
 			response.getWriter().print(str);
 		} catch (Exception e) {
