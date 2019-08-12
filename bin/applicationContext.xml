@@ -20,66 +20,154 @@
 		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-4.1.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
-<!-- 加载配置文件 -->
-    <context:property-placeholder location="classpath:*.properties" />
-    <!-- redis连接池配置--> 
-    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig" > 
-        <!--最大空闲数--> 
-        <property name="maxIdle" value="${redis.maxIdle}" /> 
-        <!--连接池的最大数据库连接数  -->
-        <property name="maxTotal" value="${redis.maxTotal}" />
-        <!--最大建立连接等待时间--> 
-        <property name="maxWaitMillis" value="${redis.maxWaitMillis}" /> 
-        <!--逐出连接的最小空闲时间 默认1800000毫秒(30分钟)-->
-        <property name="minEvictableIdleTimeMillis" value="${redis.minEvictableIdleTimeMillis}" />
-        <!--每次逐出检查时 逐出的最大数目 如果为负数就是 : 1/abs(n), 默认3-->
-        <property name="numTestsPerEvictionRun" value="${redis.numTestsPerEvictionRun}" />
-        <!--逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1-->
-        <property name="timeBetweenEvictionRunsMillis" value="${redis.timeBetweenEvictionRunsMillis}" />
-        <!--是否在从池中取出连接前进行检验,如果检验失败,则从池中去除连接并尝试取出另一个--> 
-        <property name="testOnBorrow" value="${redis.testOnBorrow}" /> 
-        <!--在空闲时检查有效性, 默认false  -->
-        <property name="testWhileIdle" value="${redis.testWhileIdle}" /> 
-    </bean >
-     
-    <!--redis连接工厂 -->
-    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" destroy-method="destroy">
-        <property name="poolConfig" ref="jedisPoolConfig"></property>
-        <!--IP地址 -->
-        <property name="hostName" value="${redis.hostName}"></property>
-        <!--端口号  -->
-        <property name="port" value="${redis.port}"></property>
-        <!--如果Redis设置有密码  -->
-        <property name="password" value="${redis.password}" />
-        <!--客户端超时时间单位是毫秒  -->
-        <property name="timeout" value="${redis.timeout}"></property>
-    </bean> 
-     
-    <!--redis操作模版,使用该对象可以操作redis  -->
-    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"
-        p:connection-factory-ref="jedisConnectionFactory" > 
-        <property name="keySerializer">
-            <bean
-                class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+	<!-- 加载配置文件 -->
+	<!-- <context:property-placeholder location="classpath:*.properties" /> -->
+	<!-- redis连接池配置 -->
+	<!-- <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig"> 
+		最大空闲数 <property name="maxIdle" value="${redis.maxIdle}" /> 连接池的最大数据库连接数 <property 
+		name="maxTotal" value="${redis.maxTotal}" /> 最大建立连接等待时间 <property name="maxWaitMillis" 
+		value="${redis.maxWaitMillis}" /> 逐出连接的最小空闲时间 默认1800000毫秒(30分钟) <property 
+		name="minEvictableIdleTimeMillis" value="${redis.minEvictableIdleTimeMillis}" 
+		/> 每次逐出检查时 逐出的最大数目 如果为负数就是 : 1/abs(n), 默认3 <property name="numTestsPerEvictionRun" 
+		value="${redis.numTestsPerEvictionRun}" /> 逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 
+		默认-1 <property name="timeBetweenEvictionRunsMillis" value="${redis.timeBetweenEvictionRunsMillis}" 
+		/> 是否在从池中取出连接前进行检验,如果检验失败,则从池中去除连接并尝试取出另一个 <property name="testOnBorrow" 
+		value="${redis.testOnBorrow}" /> 在空闲时检查有效性, 默认false <property name="testWhileIdle" 
+		value="${redis.testWhileIdle}" /> </bean> -->
+
+	<!--redis连接工厂 -->
+	<!-- <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" 
+		destroy-method="destroy"> <property name="poolConfig" ref="jedisPoolConfig"></property> 
+		IP地址 <property name="hostName" value="${redis.hostName}"></property> 端口号 
+		<property name="port" value="${redis.port}"></property> 如果Redis设置有密码 <property 
+		name="password" value="${redis.password}" /> 客户端超时时间单位是毫秒 <property name="timeout" 
+		value="${redis.timeout}"></property> </bean> -->
+
+	<!--redis操作模版,使用该对象可以操作redis -->
+	<!-- <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" 
+		p:connection-factory-ref="jedisConnectionFactory"> <property name="keySerializer"> 
+		<bean class="org.springframework.data.redis.serializer.StringRedisSerializer" 
+		/> </property> <property name="hashKeySerializer"> <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" 
+		/> </property> <property name="valueSerializer"> <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" 
+		/> </property> <property name="hashValueSerializer"> <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" 
+		/> </property> </bean> -->
+
+	<!--自定义redis工具类,在需要缓存的地方注入此类 -->
+	<!-- <bean id="redisUtil" class="com.csuft.wxl.RedisUtil.RedisUtil"> <property 
+		name="redisTemplate" ref="redisTemplate" /> </bean> -->
+
+
+	<!-- mybatis 类 映射 服务 服务接口 dataSource sqlSessionFacotory mapper -->
+	<context:component-scan
+		base-package="com.csuft.wxl.pojo"></context:component-scan>
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver">
+		</property>
+		<property name="url"
+			value="jdbc:mysql://localhost:3306/shiro?characterEncoding=UTF-8">
+		</property>
+		<property name="username" value="root">
+		</property>
+		<property name="password" value="1234">
+		</property>
+	</bean>
+	<bean id="sqlSessionFacotory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="typeAliasesPackage"
+			value="com.csuft.wxl.pojo" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations"
+			value="classpath:com/csuft/wxl/mapper/*.xml" />
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName"
+			value="sqlSessionFacotory" />
+		<property name="basePackage" value="com.csuft.wxl.mapper" />
+	</bean>
+<!-- shiro -->
+<!-- 配置shiro的过滤器工厂类，id- shiroFilter要和我们在web.xml中配置的过滤器一致 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!-- 调用我们配置的权限管理器 -->
+        <property name="securityManager" ref="securityManager" />
+        <!-- 配置我们的登录请求地址 -->
+        <property name="loginUrl" value="/login" />
+        <!-- 如果您请求的资源不再您的权限范围，则跳转到/403请求地址 -->
+        <property name="unauthorizedUrl" value="/unauthorized" />
+        <!-- 退出 -->
+        <property name="filters">
+            <util:map>
+                <entry key="logout" value-ref="logoutFilter" />
+            </util:map>
         </property>
-        <property name="hashKeySerializer">
-            <bean
-                class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        <!-- 权限配置 -->
+        <property name="filterChainDefinitions">
+            <value>
+                <!-- anon表示此地址不需要任何权限即可访问 -->
+                /login=anon
+                /index=anon
+                /static/**=anon
+                /doLogout=logout
+                <!--所有的请求(除去配置的静态资源请求或请求地址为anon的请求)都要通过登录验证,如果未登录则跳到/login -->
+                /** = authc
+            </value>
         </property>
-        <property name="valueSerializer">
-            <bean
-                class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
-        </property>
-        <property name="hashValueSerializer">
-            <bean
-                class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
-        </property>
-    </bean > 
-     
-    <!--自定义redis工具类,在需要缓存的地方注入此类  -->
-    <bean id="redisUtil" class="com.csuft.wxl.RedisUtil.RedisUtil">
-        <property name="redisTemplate" ref="redisTemplate" />
+    </bean>
+    <!-- 退出过滤器 -->
+    <bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
+        <property name="redirectUrl" value="/index" />
+    </bean>
+ 
+    <!-- 会话ID生成器 -->
+    <bean id="sessionIdGenerator"
+        class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+    <!-- 会话Cookie模板 关闭浏览器立即失效 -->
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="sid" />
+        <property name="httpOnly" value="true" />
+        <property name="maxAge" value="-1" />
+    </bean>
+    <!-- 会话DAO -->
+    <bean id="sessionDAO"
+        class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <property name="sessionIdGenerator" ref="sessionIdGenerator" />
+    </bean>
+    <!-- 会话验证调度器，每30分钟执行一次验证 ，设定会话超时及保存 -->
+    <bean name="sessionValidationScheduler"
+        class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+        <property name="interval" value="1800000" />
+        <property name="sessionManager" ref="sessionManager" />
+    </bean>
+    <!-- 会话管理器 -->
+    <bean id="sessionManager"
+        class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- 全局会话超时时间（单位毫秒），默认30分钟 -->
+        <property name="globalSessionTimeout" value="1800000" />
+        <property name="deleteInvalidSessions" value="true" />
+        <property name="sessionValidationSchedulerEnabled" value="true" />
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler" />
+        <property name="sessionDAO" ref="sessionDAO" />
+        <property name="sessionIdCookieEnabled" value="true" />
+        <property name="sessionIdCookie" ref="sessionIdCookie" />
+    </bean>
+ 
+    <!-- 安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="databaseRealm" />
+        <property name="sessionManager" ref="sessionManager" />
+    </bean>
+    <!-- 相当于调用SecurityUtils.setSecurityManager(securityManager) -->
+    <bean
+        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod"
+            value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+        <property name="arguments" ref="securityManager" />
+    </bean>
+ 
+    <bean id="databaseRealm" class="com.csuft.wxl.shiro.DatabaseRealm">
     </bean>
      
-
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
 </beans>

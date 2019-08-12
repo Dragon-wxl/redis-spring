@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csuft.wxl.mapper.UserMapper">
+	<!-- 一个用户对应一个角色，一个角色对应多个权限 -->
+	<resultMap type="User" id="UserRolePermission">
+		<id column="user_id" property="id" />
+		<result column="user_name" property="name" />
+		<result column="user_password" property="password" />
+		<collection property="role" ofType="Role">
+			<id column="roel_id" property="id" />
+			<result column="role_name" property="name" />
+		</collection>
+		<collection property="permission" ofType="Permission">
+			<id column="permission_id" property="id" />
+			<result column="permission_name" property="name" />
+		</collection>
+	</resultMap>
+	<select id="selectAllUser" resultType="User">
+		select * from user;
+	</select>
+	<!-- 根据用户名查询密码 -->
+	<select id="selectUserByIdGetPassword" resultType="String"
+		parameterType="String">
+		select password from user where name = #{name}
+	</select>
+	<!-- 根据用户名获取id -->
+	<select id="selectUserByNameGetId" resultType="int"
+		parameterType="String">
+		select id from user where name = #{name}
+	</select>
+	<!-- 根据用户名获取用户 -->
+	<select id="selectUserByNameGetUser" resultType="User"
+		parameterType="String">
+		select * from user where name = #{name}
+	</select>
+
+	<select id="selectUserRolePermission" parameterType="String"
+		resultMap="UserRolePermission">
+		select user.name user_name,user.id user_id,user.password
+		user_password,
+		role.id
+		roel_id,role.name role_name,permission.id
+		permission_id,permission.name permission_name
+		from user left join
+		user_role on user.id=user_role.uid left join role
+		on
+		user_role.rid=role.id join role_permission on
+		role.id=role_permission.rid
+		join permission on
+		role_permission.pid=permission.id where
+		user.name=#{name}
+	</select>
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO `user`
+		(`name`, `password`, `salt`) VALUES (#{name},
+		#{password}, #{salt});
+	</insert>
+	<!-- 添加用户角色表，更具用户id 和角色id -->
+	<insert id="insertUserRole" parameterType="Map">
+		INSERT INTO
+		`user_role` (`uid`, `rid`) VALUES (#{uid}, #{rid});
+	</insert>
+</mapper>
